@@ -1,0 +1,19 @@
+/* Interface to queues of strings */
+
+typedef string elem;
+
+typedef struct queue_header* queue;
+
+bool queue_empty(queue Q);      /* O(1) */
+queue queue_new()               /* O(1) */
+/*@ensures queue_empty(\result); @*/;              
+
+void enq(queue Q, string s)     /* O(1) */
+/*@ensures !queue_empty(Q);@*/;
+
+elem deq(queue Q)               /* O(1) */
+/*@requires !queue_empty(Q);@*/;
+
+
+/* Implementation of queues */
+

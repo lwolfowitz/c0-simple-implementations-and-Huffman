@@ -1,0 +1,27 @@
+
+#use <util>
+
+pixel[] rotate (pixel[] A, int width, int height)
+//@ requires (width == height);
+//@requires is_valid_imagesize(width,height);
+//@ensures \result != A;
+//@ensures \length(\result) == 4* \length(A);// add contract here
+{
+  pixel[] B = alloc_array(pixel, 4*width*height); // change this line
+
+  for (int i = 0; i < (width*height); i = i + 1)  // your code here
+{
+int row = get_row(i, width, height);
+int col = get_column(i, width, height);
+int topleft = get_index((width-1)-col, row, width*2, height*2);
+int topright = get_index (row, col + width, width*2, height*2);
+int bottomleft = get_index((height*2-1)-row, width-1-col, width*2, height*2);
+int bottomright = get_index(col+height, 2*width-1-row, width*2, height*2);
+B[topleft] = A[i];
+B[topright] = A[i];
+B[bottomleft] = A[i];
+B[bottomright] = A[i];
+}
+
+  return B;
+}

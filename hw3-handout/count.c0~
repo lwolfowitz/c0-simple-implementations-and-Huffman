@@ -1,0 +1,15 @@
+#use <conio>
+
+int count_vocab(string[] vocab, int[] freq, int table_length,
+                string[] tweet_words, int tweet_words_length,
+                bool fast)
+//@requires table_length == \length(vocab) && table_length == \length(freq);
+//@requires \length(tweet_words) == tweet_words_length;
+//@requires is_sorted(vocab, 0, table_length) && all_distinct(vocab, table_length);
+{
+
+  int unknown = 0;
+
+  return unknown;
+
+}

@@ -1,0 +1,74 @@
+
+#use <string>
+
+bool all_distinct(string[] A, int n) 
+//@requires 0 <= n && n <= \length(A);
+//@requires is_sorted(A,0,n);
+{
+for (int i = 0; i<n-1; i++)
+    //@loop_invariant 0 <= i;
+    {
+
+if (string_equal(A[i+1], A[i]) == true)
+   			 {
+ return false;
+			}
+		}
+  return true; // you need to edit this line
+}
+
+int count_distinct(string[] A , int n) 
+//@requires 0 <= n && n <= \length(A);
+//@requires is_sorted(A,0,n);
+//@ensures 0 <= \result && \result <= n;
+{
+int count = 1;
+for(int i=0; i<n-1; i++)
+ //@loop_invariant 0 <= i;
+{
+if (string_equal(A[i+1], A[i]) == false) 
+{
+count++;
+}
+}
+  return count; // you need to edit this line
+}
+
+string[] remove_duplicates(string[] A, int n) 
+//@requires 0 <= n && n <= \length(A);
+//@requires is_sorted(A,0,n);
+//@ensures 0 <= \length(\result) &&  \length(\result) <= n;
+//@ensures is_sorted(\result,0,\length(\result));
+//@ensures (all_distinct(\result, \length(\result)) == true);
+{
+int distinct = count_distinct(A,n);
+int g = 1;
+string[] result = alloc_array(string, distinct); // you need to edit this line
+result[0] = A[0];
+for(int i=0; i<n-1; i++)
+    //@loop_invariant 0 <= i;
+{
+	if (string_equal(A[i], A[i+1]) == false)
+   	{
+	 result[g] = A[i+1];
+ 	   g++;
+	}
+}
+
+
+  return result;
+}
+
+void test_duplicates() {
+  
+string[] testOne = alloc_array(string, 5);
+testOne[0] = "aa";
+testOne[1] = "aa";
+testOne[2] = "aa";
+testOne[3] = "ba";
+testOne[4] = "ba";
+string[] testTwo = remove_duplicates(testOne, 5);
+
+//@assert (string_equal(testOne[0], testTwo[0]));
+//@assert (string_equal(testOne[3], testTwo[1]));
+}

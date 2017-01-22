@@ -1,0 +1,9 @@
+int main {
+int i = 0;
+
+if (get_red(0x00FF0000) != 255) i=1;
+if (get_alpha(0xFF000000) != 255) i=1;
+if (get_green(0x0000FF00) != 255) i=1;
+if (get_blue(0x000000FF) != 255) i=1;
+return i;
+}

@@ -1,0 +1,50 @@
+#use <conio>
+
+int count_vocab(string[] vocab, int[] freq, int table_length,
+                string[] tweet_words, int tweet_words_length,
+                bool fast)
+//@requires table_length == \length(vocab) && table_length == \length(freq);
+//@requires \length(tweet_words) == tweet_words_length;
+//@requires is_sorted(vocab, 0, table_length) && all_distinct(vocab, table_length);
+{
+
+string[] new_words = alloc_array(string, tweet_words_length);
+int b = 0;
+
+if (fast == true)
+{
+for (int i = 0; i<tweet_words_length; i++)
+    //@loop_invariant 0 <= i;
+{
+int g = binsearch(tweet_words[i], vocab, table_length);
+if (g == -1) 
+{
+new_words[b] = tweet_words[i];
+b++;
+}
+else
+{
+freq[g]++;
+}
+}
+}
+else
+{
+for (int i = 0; i<tweet_words_length; i++)
+    //@loop_invariant 0 <= i;
+{
+int g = linsearch(tweet_words[i], vocab, table_length);
+if (g == -1) 
+{
+new_words[b] = tweet_words[i];
+b++;
+}
+else
+{
+freq[g]++;
+}
+}
+}
+  return b;
+
+}

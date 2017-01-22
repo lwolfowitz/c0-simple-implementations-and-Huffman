@@ -1,0 +1,25 @@
+
+#use <util>
+
+pixel[] nightvision (pixel[] A, int width, int height)
+//@requires is_valid_imagesize(width,height);
+//@requires \length(A) == width*height;
+//@ensures \result != A;
+//@ensures \length(\result) == \length(A);// add contract here
+{
+  pixel[] B = alloc_array(pixel, width*height); // change this line
+
+  for (int i = 0; i < (width*height); i = i + 1)
+    //@loop_invariant 0 <= i;
+    { 
+ 
+int alpha = get_alpha(A[i]);
+int red = get_red(A[i]);
+int green = get_green(A[i]);
+int blue = get_blue(A[i]);
+green = (red + green + blue)/3;
+B[i] = make_pixel(alpha, 0, green, 0);
+}
+
+  return B;
+}

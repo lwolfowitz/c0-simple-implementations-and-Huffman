@@ -1,0 +1,215 @@
+
+#use <conio>
+#use <string>
+
+ /*********************************************************************
+              Interface
+ **********************************************************************/
+
+// hufftree is defined in pq-client.c0
+
+// Returns true if a tree is a Huffman treef; false - otherwise
+bool is_hufftree(hufftree H);
+
+// Returns true if a node is a leaf; false - otherwise
+bool is_hufftree_leaf(hufftree H)
+//@requires H != NULL;
+;
+
+// Returns true if a node is an internal node; false - otherwise
+bool is_hufftree_internal_node(hufftree H)
+//@requires H != NULL;
+;
+
+// Returns the total number of nodes in the Huffman tree H
+int hufftree_size(hufftree H)
+//@requires is_hufftree(H);
+;
+
+// Returns the number of leaves in the Huffman tree H
+int hufftree_count_leaves(hufftree H)
+//@requires is_hufftree(H);
+;
+
+// Constructs an optimal encoding using Huffman's algorithm.
+hufftree build_hufftree(char[] chars, int[] freqs, int n)
+//@requires 1 < n && n <= \length(chars) && \length(chars) == \length(freqs);
+//@ensures is_hufftree(\result);
+//@ensures hufftree_count_leaves(\result) == n;
+;
+
+//Creates a hashtable mapping characters to bitstrings from the given Huffman tree H
+hashtable hufftree_to_hashtable(hufftree H)
+//@requires is_hufftree(H);
+;
+
+// Encodes the input string using the map M 
+bitstring encode_map (hashtable M, string input)
+//@ensures is_bitstring(\result);
+;
+
+// Encodes the input string using the Huffman tree H and the above mapping
+bitstring encode (hufftree H, string input)
+//@requires is_hufftree(H);
+//@ensures is_bitstring(\result);
+;
+
+struct decode_result {
+  char decoded;
+  string leftovers;
+};
+
+// Decodes the bit string  based on the Huffman tree H:
+// if some prefix of bits decodes to a character, then
+// returns a decode_result with that character, and
+// any bits leftover.  otherwise returns NULL
+struct decode_result* decode(hufftree H, string bits)
+//@requires is_hufftree(H);
+//@requires is_bitstring(bits);
+//@ensures \result == NULL || is_bitstring(\result->leftovers);
+;
+
+ /*********************************************************************
+              Your implementation
+ **********************************************************************/
+
+bool is_hufftree_leaf(struct hufftree_node * H)
+{
+  return (H->value != '\0' && H->left == NULL && H->right == NULL);
+}
+
+bool is_hufftree_internal_node(struct hufftree_node * H)
+{
+  return (H->value == '\0' 
+          && is_hufftree(H->left) && is_hufftree(H->right)
+          && H->frequency == (H->left->frequency + H->right->frequency));
+}
+
+bool is_hufftree(struct hufftree_node * H) {
+  return (H != NULL && H->frequency > 0 
+          && (is_hufftree_leaf(H) || is_hufftree_internal_node(H)));
+}
+
+int hufftree_size(hufftree H)
+{
+  if (is_hufftree_leaf(H)) {
+    return 1;
+  }
+  else {
+    return (1+ hufftree_size(H->left) + hufftree_size(H->right));
+  }
+}
+
+int hufftree_count_leaves(hufftree H)
+{
+  if (is_hufftree_leaf(H)) {
+    return 1;
+  }
+  else {
+    return (hufftree_count_leaves(H->left) + hufftree_count_leaves(H->right));
+  }
+}
+
+hufftree build_hufftree(char[] chars, int[] freqs, int n)
+//@requires 1 < n && n <= \length(chars) && \length(chars) == \length(freqs);
+//@ensures is_hufftree(\result);
+//@ensures hufftree_count_leaves(\result) == n;
+{
+pq N = pq_new(n);
+for(int i = 0; i < n; i++)
+{
+hufftree one = alloc(struct hufftree_node);
+one->value = chars[i];
+one->frequency = freqs[i];
+pq_insert(N, one);
+}
+while(pq_size(N) > 1)
+{
+hufftree one = pq_delmin(N);
+hufftree two = pq_delmin(N);
+hufftree three = alloc(struct hufftree_node);
+three->value = '\0';
+three->frequency = one->frequency + two->frequency;
+three->left = one;
+three->right = two;
+pq_insert(N, three);
+}	
+return pq_delmin(N);
+}
+
+
+hashtable hufftree_to_hashtable(hufftree H)
+{
+stack S = stack_new(hufftree_size(H));
+stack_elem one = alloc(struct hufftree_with_path);
+one->tree = H;
+one->path = "";
+push(S,one);
+hashtable hash = hashtable_new(hufftree_count_leaves(H));
+while(!stack_empty(S))
+{
+stack_elem two = pop(S);
+if(two->tree->value != '\0')
+{
+hashtable_elem three = alloc(struct char_with_string);
+three->c = two->tree->value;
+three->s = two->path;
+hashtable_insert(hash, three);
+}
+else
+{
+stack_elem four = alloc(struct hufftree_with_path);
+four->tree = two->tree->left;
+four->path = string_join(two->path, "0");
+stack_elem five = alloc(struct hufftree_with_path);
+five->tree = two->tree->right;
+five->path = string_join(two->path, "1");
+push(S,four);
+push(S,five);
+}}
+return hash;
+}
+
+bitstring encode_map(hashtable H, string input)
+{
+string result = "";
+for(int i = 0; i < string_length(input); i++)
+{
+hashtable_elem one = hashtable_lookup(H,string_charat(input,i));
+result = string_join(result, one->s);
+}
+return result;
+}
+
+bitstring encode(hufftree H, string input)
+{
+hashtable hash = hufftree_to_hashtable(H);
+return encode_map(hash, input);
+}
+
+struct decode_result* decode(hufftree H, string bits)
+//@requires is_hufftree(H);
+//@requires is_bitstring(bits);
+{
+struct decode_result* obj = alloc(struct decode_result);
+int counter = 0;
+while(!is_hufftree_leaf(H))
+{
+if(counter == string_length(bits))
+{
+return NULL;
+}
+else if(string_charat(bits, counter) == '0')
+{
+H = H->left;
+counter++;
+}
+else if(string_charat(bits, counter) == '1')
+{
+H = H->right;
+counter++;
+}}
+obj->leftovers = string_sub(bits, counter, string_length(bits));
+obj->decoded = H->value;
+return obj;
+}

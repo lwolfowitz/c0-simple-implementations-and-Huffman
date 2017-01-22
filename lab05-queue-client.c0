@@ -1,0 +1,27 @@
+#use <conio>
+
+void test_queue() {
+
+  queue Q = queue_new();
+
+  printbool(queue_empty(Q));
+
+  enq(Q,"who");
+
+  printbool(queue_empty(Q));
+
+  enq(Q,"knew");
+
+  printbool(queue_empty(Q));
+
+  string s1 = deq(Q);
+  println(s1);
+
+  printbool(queue_empty(Q));
+
+  string s2 = deq(Q);
+  println(s2);
+
+  printbool(queue_empty(Q));
+
+}

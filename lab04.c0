@@ -1,0 +1,66 @@
+#use <conio>
+#use <string>
+
+int partition(int[] A, int lower, int pivot_index, int upper) 
+//@requires 0 <= lower && lower <= pivot_index &&  pivot_index < upper && upper <= \length(A);
+//@ensures lower <= \result && \result < upper;
+//@ensures ge_seg(A[\result], A, lower, \result);
+//@ensures le_seg(A[\result], A, \result, upper);
+{
+  int pivot = A[pivot_index];
+
+  // bounds of what's left to partition
+  int left = -1; // Edit this line 
+  int right = -1; // Edit this line
+
+  while (left < right)
+    //@loop_invariant lower < left && left <= right && right <= upper;
+    //@loop_invariant ge_seg(pivot, A, lower+1, left); 
+    //@loop_invariant le_seg(pivot, A, right, upper); 
+    //@loop_invariant A[lower] == pivot;
+    {
+    }
+
+  return -1; // Edit this line
+}
+
+string aToString(int[] A , int size) {
+  string r = "";
+  for (int i = 0 ; i < size; i = i + 1) {
+    r = string_join (r,string_join(",",string_fromint(A[i])));
+  }
+  return r;
+}
+
+void test_partition(int pivot_index)
+//@requires 0 <= pivot_index && pivot_index < 4;
+{
+
+  int[] A = alloc_array(int,4);
+
+  A[0] = 3;
+  A[1] = 1;
+  A[2] = 4;
+  A[3] = 2;
+
+  print("\n\n");
+
+  print("Original array: ");
+  println(aToString(A,4));
+
+  print("Partitioning on index ");
+  printint(pivot_index);
+  println("");
+
+  print("New pivot index: ");
+  int x = partition(A,0,pivot_index,4);  
+  printint(x);
+  println("");
+
+  print("Array after partitioning: ");
+  println(aToString(A,4));
+
+}
+
+
+

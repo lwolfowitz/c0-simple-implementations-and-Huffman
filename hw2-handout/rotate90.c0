@@ -1,0 +1,21 @@
+#use <util>
+
+pixel[] rotate90 (pixel[] A, int width, int height)
+//@ requires (width == height);
+//@requires is_valid_imagesize(width,height);
+//@ensures \result != A;
+//@ensures \length(\result) == \length(A);
+{
+  pixel[] B = alloc_array(pixel, width*height); // change this line
+
+  for (int i = 0; i < (width*height); i = i + 1)
+    //@loop_invariant 0 <= i;
+{
+int row = get_row (i, width, height);
+int col = get_column(i, width, height);
+int index = get_index(col, width-1-row, width, height);
+B[index] = A[i];
+}
+
+  return B;
+}

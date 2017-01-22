@@ -1,0 +1,55 @@
+/*
+ * Clac, stack-based calculator language
+ *
+ * Principles of Imperative Computation
+ */
+
+#use <string>
+#use <parse>
+#use <conio>
+#use <args>
+#use <util>
+
+/* Return true: clac top-level interpreter will expect more input */
+/* Return false: clac top-level interpreter will exit */
+bool eval(queue Q, stack S)
+//@ensures \result == false || queue_empty(Q);
+{
+  while (!queue_empty(Q)) {
+    // get the current operation
+    string op = deq(Q); 
+
+    // you can uncomment this line to have clac print each operation
+    // as you process it.  
+    // print("Read: "); print(op); print("\n");
+
+    if (string_equal(op, "print")) {
+
+      /* FIXME: next line is unsafe and should be fixed */
+      int x = pop(S);
+      printint(x); print("\n");
+
+    } else if (string_equal(op, "quit")) {
+
+      // we've written the case for quit for you
+      // you don't need to change this code.  
+
+      return false; /* do not continue */
+
+    } else {
+
+      // we've written the case for numbers for you
+      // you don't need to change this code.  
+
+      /* not defined as an operation name, should be an int */
+      int* p = parse_int(op, 10);
+      if (p == NULL) { /* not an int */
+        /* call error(msg) which prints msg and aborts */
+        error(string_join("undefined operation ", op));
+      }
+      push(S, *p);
+
+    }
+  }
+  return true;                  /* continue */
+}

@@ -1,0 +1,60 @@
+/* Interface to queues of strings */
+
+typedef string elem;
+
+typedef struct queue_header* queue;
+
+/* Implementation of queues */
+
+struct queue_header {
+elem[] data;
+int capacity;
+int front;
+int back;
+};
+
+bool is_queue(queue Q)
+{
+  //@assert \length(Q->data) == Q->capacity;
+if (!((Q->front >= 0) && (Q->front < Q->capacity))) {return false;}
+if (!(Q->back >= 0 && Q->back < Q->capacity)) {return false;}
+if (!(Q->back >= Q->front)) {return false;}
+return true;
+}
+
+bool queue_empty(queue Q)
+//@requires is_queue(Q);
+{
+  return (Q->front == 0 && Q->back == 0);
+}
+
+queue queue_new()
+//@ensures is_queue(\result);
+//@ensures queue_empty(\result);
+{
+  queue Q = alloc(struct queue_header);
+  Q->front = 0;
+  Q->back = 0;
+  Q->capacity = 100;
+  Q->data = alloc_array(elem, Q->capacity);
+  return Q;
+}
+
+void enq(queue Q, elem e)
+//@requires is_queue(Q);
+//@ensures is_queue(Q);
+{
+if (Q->back+1 == Q->capacity) error("stack overflow");
+Q->back++;
+Q->data[Q->back] = e;
+}
+
+elem deq(queue Q)
+//@requires !queue_empty(Q);
+//@requires is_queue(Q);
+//@ensures is_queue(Q);
+{
+elem r = Q->data[Q->front];
+Q->front++;
+return r;
+}

@@ -1,0 +1,12 @@
+
+#use <util>
+
+pixel[] nightvision (pixel[] A, int width, int height)
+// add contract here
+{
+  pixel[] B = alloc_array(pixel, 0); // change this line
+
+  // your code here
+
+  return B;
+}
